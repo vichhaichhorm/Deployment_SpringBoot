@@ -1,7 +1,10 @@
 package com.mfi.love_microfinance.service;
 
+import com.mfi.love_microfinance.entity.Client;
 import com.mfi.love_microfinance.entity.Department;
+import com.mfi.love_microfinance.entity.Stuff;
 import com.mfi.love_microfinance.models.DepartmentModel;
+import com.mfi.love_microfinance.models.StuffModel;
 import com.mfi.love_microfinance.repository.DepartmentRepository;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +56,37 @@ public class DepartmentService {
             departmentRepository.save(department);
             departmentDetails.setId(id);
             return  departmentDetails;
+        }
+        return  null;
+    }
+
+    public List<StuffModel> getAllStuffInDepartmentId(Integer id){
+        Department department=departmentRepository.findById(id).orElse(null);
+        List<StuffModel> stuffModels=new ArrayList<>();
+        if(department!=null){
+            List<Stuff> stuffs=department.getStuffs();
+            for (Stuff stuff:stuffs
+                 ) {
+                StuffModel stuffModel=new StuffModel();
+
+                stuffModel.setId(stuff.getId());
+                stuffModel.setName(stuff.getName());
+                stuffModel.setDob(stuff.getDob());
+                stuffModel.setSex(stuff.getSex());
+                stuffModel.setCid(stuff.getCid());
+                stuffModel.setAddress(stuff.getAddress());
+                stuffModel.setSalary(stuff.getSalary());
+                stuffModel.setStatus(stuff.getStatus());
+                stuffModel.setStopWork(stuff.getStopWork());
+                stuffModel.setStartWork(stuff.getStartWork());
+                stuffModel.setDepartmentId(stuff.getDepartment().getId());
+                stuffModel.setDepartmentName(stuff.getDepartment().getName());
+
+                stuffModels.add(stuffModel);
+
+            }
+
+            return  stuffModels;
         }
         return  null;
     }

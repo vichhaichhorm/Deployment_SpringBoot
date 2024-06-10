@@ -2,6 +2,7 @@ package com.mfi.love_microfinance.controller;
 
 import com.mfi.love_microfinance.entity.Department;
 import com.mfi.love_microfinance.models.DepartmentModel;
+import com.mfi.love_microfinance.models.StuffModel;
 import com.mfi.love_microfinance.service.DepartmentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,10 @@ public class DepartmentController {
     @GetMapping("/{id}")
     public  DepartmentModel getDepartment(@PathVariable Integer id){
         return  departmentService.getDepartmentById(id);
+    }
+@GetMapping("/{id}/stuffs")
+    public  List<StuffModel> getAllStuffInDepartmentId(@PathVariable Integer id){
+        return  departmentService.getAllStuffInDepartmentId(id);
     }
 
     @PostMapping
