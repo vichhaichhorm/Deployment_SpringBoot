@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -25,8 +26,17 @@ public class Stuff {
     private  Date startWork;
     private  Boolean stopWork;
 
+
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     @JsonBackReference
     private Department department;
+    @OneToMany(mappedBy = "co")
+    private List<Acount> acount1;
+    @OneToMany(mappedBy = "aa")
+    private List<Acount> acount2;
+    @OneToMany(mappedBy = "bm")
+    private List<Acount> acount3;
+
+
 }

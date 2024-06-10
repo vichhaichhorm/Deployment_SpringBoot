@@ -2,6 +2,7 @@ package com.mfi.love_microfinance.controller;
 
 import com.mfi.love_microfinance.entity.Department;
 import com.mfi.love_microfinance.entity.Stuff;
+import com.mfi.love_microfinance.models.StuffModel;
 import com.mfi.love_microfinance.service.StuffService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,22 +21,22 @@ public class StuffController {
 
 
     @GetMapping
-    private List<Stuff> getAllStuff(){
+    private List<StuffModel> getAllStuff(){
         return  stuffService.getAllStuff();
     }
 
     @GetMapping("/{id}")
-    public Stuff getStuff(@PathVariable Integer id){
+    public StuffModel getStuff(@PathVariable Integer id){
         return  stuffService.getStuffById(id);
     }
 
     @PostMapping
-    public  Stuff createStuff(@RequestBody Stuff stuff){
+    public  StuffModel createStuff(@RequestBody StuffModel stuff){
         return  stuffService.createStuff(stuff);
     }
 
     @PutMapping("/{id}")
-    public  Stuff updateStuff(@PathVariable Integer id,@RequestBody Stuff stuffDetails){
+    public  StuffModel updateStuff(@PathVariable Integer id,@RequestBody StuffModel stuffDetails){
         return stuffService.updateStuff(id,stuffDetails);
     }
 

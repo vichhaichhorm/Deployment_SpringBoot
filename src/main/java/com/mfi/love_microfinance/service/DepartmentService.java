@@ -1,9 +1,11 @@
 package com.mfi.love_microfinance.service;
 
 import com.mfi.love_microfinance.entity.Department;
+import com.mfi.love_microfinance.models.DepartmentModel;
 import com.mfi.love_microfinance.repository.DepartmentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,24 +17,42 @@ public class DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
-    public List<Department> getAllDepartment(){
-        return  departmentRepository.findAll();
+    public List<DepartmentModel> getAllDepartment(){
+        List<Department> departments=departmentRepository.findAll();
+        List<DepartmentModel> departmentModels=new ArrayList<>();
+        for (Department department: departments
+             ) {
+            DepartmentModel departmentModel=new DepartmentModel();
+            departmentModel.setId(department.getId());
+            departmentModel.setName(department.getName());
+            departmentModels.add(departmentModel);
+
+        }
+        return departmentModels;
     }
 
-    public Department getDepartmentById(Integer id){
-        return  departmentRepository.findById(id).orElse(null);
+    public DepartmentModel getDepartmentById(Integer id){
+        Department department=departmentRepository.findById(id).orElse(null);
+        DepartmentModel departmentModel=new DepartmentModel();
+        if(department!=null){
+            departmentModel.setId(department.getId());
+            departmentModel.setName(department.getName());
+            return  departmentModel;
+        }
+        return  null;
     }
 
     public  Department createDepartment(Department department){
         return  departmentRepository.save(department);
     }
 
-    public  Department updateDepartment(Integer id, Department departmentDetails){
+    public  DepartmentModel updateDepartment(Integer id, DepartmentModel departmentDetails){
         Department department=departmentRepository.findById(id).orElse(null);
         if(department!=null){
             department.setName(departmentDetails.getName());
-            department.setStuffs(departmentDetails.getStuffs());
-            return  departmentRepository.save(department);
+            departmentRepository.save(department);
+            departmentDetails.setId(id);
+            return  departmentDetails;
         }
         return  null;
     }
