@@ -33,7 +33,7 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public  Department createDepartment(@RequestBody Department department){
+    public  DepartmentModel createDepartment(@RequestBody DepartmentModel department){
         return  departmentService.createDepartment(department);
     }
 

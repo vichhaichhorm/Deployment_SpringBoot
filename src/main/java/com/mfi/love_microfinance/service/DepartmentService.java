@@ -45,8 +45,12 @@ public class DepartmentService {
         return  null;
     }
 
-    public  Department createDepartment(Department department){
-        return  departmentRepository.save(department);
+    public  DepartmentModel createDepartment(DepartmentModel departmentModel){
+        Department department=new Department();
+        department.setName(departmentModel.getName());
+         department= departmentRepository.save(department);
+         departmentModel.setId(department.getId());
+        return  departmentModel;
     }
 
     public  DepartmentModel updateDepartment(Integer id, DepartmentModel departmentDetails){

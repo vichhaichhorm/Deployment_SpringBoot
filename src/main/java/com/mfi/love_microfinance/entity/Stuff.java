@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -18,12 +19,12 @@ public class Stuff {
     private  Integer id;
     private  String name;
     private  Character sex;
-    private Date dob;
+    private LocalDate dob;
     private  String cid;
     private  String address;
     private  Boolean status;
     private  Float salary;
-    private  Date startWork;
+    private  LocalDate startWork;
     private  Boolean stopWork;
 
 

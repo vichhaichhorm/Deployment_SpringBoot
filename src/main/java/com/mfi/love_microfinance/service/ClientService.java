@@ -32,6 +32,7 @@ public class ClientService {
             clientModel.setStatus(client.getStatus());
             clientModel.setEducation(client.getEducation());
             clientModel.setJob(client.getJob());
+            clientModel.setPhone(client.getPhone());
             clientModels.add(clientModel);
         }
         return  clientModels;
@@ -50,6 +51,7 @@ public class ClientService {
         clientModel.setStatus(client.getStatus());
         clientModel.setEducation(client.getEducation());
         clientModel.setJob(client.getJob());
+        client.setPhone(client.getPhone());
         return  clientModel;
     }
 
@@ -65,6 +67,7 @@ Client client=new Client();
         client.setSalary(clientDetails.getSalary());
         client.setEducation(clientDetails.getEducation());
         client.setStatus(clientDetails.getStatus());
+        client.setPhone(clientDetails.getPhone());
      Client saveClient=   clientRepository.save(client);
      clientDetails.setId(saveClient.getId());
         return clientDetails;
@@ -82,6 +85,7 @@ Client client=new Client();
             client.setSalary(clientDetails.getSalary());
             client.setEducation(clientDetails.getEducation());
             client.setStatus(clientDetails.getStatus());
+            client.setPhone(clientDetails.getPhone());
             clientRepository.save(client);
             clientDetails.setId(id);
 

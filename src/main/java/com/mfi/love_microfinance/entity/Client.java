@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -18,14 +19,14 @@ public class Client {
     private  Integer id;
     private  String name;
     private  Character sex;
-    private Date dob;
+    private LocalDate dob;
     private String cid;
     private  String address;
     private  String job;
     private  Float salary;
     private  String education;
     private  Boolean status;
-
+    private String phone;
     @OneToMany(mappedBy = "client1")
     private List<Acount> acount1;
     @OneToMany(mappedBy = "client2")

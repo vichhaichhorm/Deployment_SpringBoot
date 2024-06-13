@@ -2,12 +2,15 @@ package com.mfi.love_microfinance.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +23,9 @@ public class Acount {
     private  Float amount;
     private  Integer term;
     private  Float rate;
-    private Date debusdate;
+    private LocalDate debusdate;
+    private Float deposit=0.0f;
+    private  Boolean close=false;
     @ManyToOne
     @JoinColumn(name = "client1_id")
     private Client  client1;
@@ -37,4 +42,12 @@ public class Acount {
     @ManyToOne
     @JoinColumn(name = "bm_id")
     private  Stuff bm;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<LandTitle> landTitles;
+
+    @OneToMany(mappedBy = "account")
+
+    private List<Schedule> schedule;
 }
