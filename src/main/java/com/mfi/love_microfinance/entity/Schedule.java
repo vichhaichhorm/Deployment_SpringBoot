@@ -19,6 +19,7 @@ public class Schedule {
     private String dayOverdue="";
     private Boolean isPaid=false;
     private  Float total=0.0f;
+    private  Float lackOfPayment=0.0f;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

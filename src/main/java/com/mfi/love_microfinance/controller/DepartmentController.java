@@ -2,8 +2,10 @@ package com.mfi.love_microfinance.controller;
 
 import com.mfi.love_microfinance.entity.Department;
 import com.mfi.love_microfinance.models.DepartmentModel;
+import com.mfi.love_microfinance.models.GetAllDepartmentModel;
 import com.mfi.love_microfinance.models.StuffModel;
 import com.mfi.love_microfinance.service.DepartmentService;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public class DepartmentController {
     }
 
     @GetMapping
-    private List<DepartmentModel> getAllDepartment(){
+    private List<GetAllDepartmentModel> getAllDepartment(){
         return  departmentService.getAllDepartment();
     }
 
@@ -34,6 +36,7 @@ public class DepartmentController {
 
     @PostMapping
     public  DepartmentModel createDepartment(@RequestBody DepartmentModel department){
+        System.out.println("Create department");
         return  departmentService.createDepartment(department);
     }
 

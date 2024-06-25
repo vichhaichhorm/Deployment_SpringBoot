@@ -42,6 +42,7 @@ public class ScheduleService {
 
             schedule.setDueDate(dueDate.plusDays(30*i));
             schedule.setTotal((float)emi);
+            schedule.setLackOfPayment(0.0f);
             schedule.setInterest((float)interest);
             schedule.setPrincipalDue((float)(emi-interest));
             System.out.println("P: "+p+" - "+(emi-interest)+" = "+(p-emi+interest));
@@ -55,4 +56,5 @@ public class ScheduleService {
         }
         return  "Yes";
     }
+
 }

@@ -50,4 +50,7 @@ public class Acount {
     @OneToMany(mappedBy = "account")
 
     private List<Schedule> schedule;
+    @OneToMany(mappedBy = "account")
+
+    private List<Payment> payments;
 }

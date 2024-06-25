@@ -6,4 +6,5 @@ import lombok.Data;
 public class DepartmentModel {
     private  Integer id;
     private  String name;
+    private   String imageURL=null;
 }

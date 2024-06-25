@@ -1,6 +1,8 @@
 package com.mfi.love_microfinance.controller;
 
+import com.mfi.love_microfinance.models.AccountResponeForPayment;
 import com.mfi.love_microfinance.models.AcountModel;
+import com.mfi.love_microfinance.models.PaymentModel;
 import com.mfi.love_microfinance.models.SheduleResponModel;
 import com.mfi.love_microfinance.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +38,13 @@ public class AcountController {
     public SheduleResponModel getScheduleForClient(@PathVariable Integer id){
         return  accountService.getTable(id);
     }
-
+    @PostMapping("/pay")
+    public  String repay(@RequestBody PaymentModel paymentModel){
+        System.out.println("Paymetn in account controller");
+        return  accountService.repay(paymentModel);
+    }
+    @GetMapping("/checkbeforepay/{id}")
+    public AccountResponeForPayment checkAccountBeforePay(@PathVariable Integer id){
+        return  accountService.checkAccountBeforePay(id);
+    }
 }

@@ -1,16 +1,14 @@
 package com.mfi.love_microfinance.service;
 
 import com.mfi.love_microfinance.entity.*;
-import com.mfi.love_microfinance.models.AcountModel;
-import com.mfi.love_microfinance.models.TableModel;
-import com.mfi.love_microfinance.models.SheduleResponModel;
-import com.mfi.love_microfinance.repository.AcountRepository;
-import com.mfi.love_microfinance.repository.ClientRepository;
-import com.mfi.love_microfinance.repository.StuffRepository;
+import com.mfi.love_microfinance.models.*;
+import com.mfi.love_microfinance.repository.*;
 import jakarta.persistence.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +24,10 @@ public class AccountService {
     @Autowired
     private ScheduleService scheduleService;
 
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+@Autowired
+    PaymentRepository paymentRepository;
     public List<AcountModel> getAllAccount(){
         List<Acount> accounts=acountRepository.findAll();
         List<AcountModel> acountModels = new ArrayList<>();
@@ -156,10 +158,61 @@ public class AccountService {
                 tableModel.setTotal(shedule.getTotal());
                 tableModel.setPrincipalDue(shedule.getPrincipalDue());
             tablesModels.add(tableModel);
+
         }
         sheduleResponModel.setTable(tablesModels);
         return  sheduleResponModel;
     }
 
+public String repay(PaymentModel paymentModel){
+        System.out.println("Paymetn in account service");
+
+
+        Acount acount=acountRepository.findById(paymentModel.getAccountId()).orElse(null);
+        if(acount==null){
+            return  "not have this account ID : "+paymentModel.getAccountId();
+        }
+    Float money=paymentModel.getAmount();
+    for (Schedule schedule: acount.getSchedule()
+         ) {
+        if( (schedule.getDueDate().isBefore(LocalDate.now()) || schedule.getDueDate().equals(LocalDate.now())) && !schedule.getIsPaid() && money>0){
+
+            money=money- schedule.getTotal();
+            if(money>0){
+
+                schedule.setIsPaid(true);
+                schedule.setLackOfPayment(0.0f);
+                scheduleRepository.save(schedule);
+            }
+            else{
+                schedule.setLackOfPayment(Math.abs(money));
+                scheduleRepository.save(schedule);
+                break;
+            }
+        }
+        else {
+            break;
+        }
+    }
+    acount.setDeposit(money);
+    acountRepository.save(acount);
+    Payment payment=new Payment();
+    payment.setAccount(acount);
+    payment.setDatePay(LocalDateTime.now());
+    payment.setAmount(paymentModel.getAmount());
+    paymentRepository.save(payment);
+        return  "Successfully";
+}
+
+public AccountResponeForPayment checkAccountBeforePay(Integer id){
+        AccountResponeForPayment accountResponeForPayment=new AccountResponeForPayment();
+        Acount acount=acountRepository.findById(id).orElse(null);
+        if(acount!=null){
+            accountResponeForPayment.setAccountId(acount.getId());
+            accountResponeForPayment.setName(acount.getClient1().getName());
+            return  accountResponeForPayment;
+        }
+        return  null;
+}
 
 }

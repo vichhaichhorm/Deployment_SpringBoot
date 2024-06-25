@@ -4,6 +4,7 @@ import com.mfi.love_microfinance.entity.Client;
 import com.mfi.love_microfinance.entity.Department;
 import com.mfi.love_microfinance.entity.Stuff;
 import com.mfi.love_microfinance.models.DepartmentModel;
+import com.mfi.love_microfinance.models.GetAllDepartmentModel;
 import com.mfi.love_microfinance.models.StuffModel;
 import com.mfi.love_microfinance.repository.DepartmentRepository;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,16 @@ public class DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
-    public List<DepartmentModel> getAllDepartment(){
+    public List<GetAllDepartmentModel> getAllDepartment(){
         List<Department> departments=departmentRepository.findAll();
-        List<DepartmentModel> departmentModels=new ArrayList<>();
+        List<GetAllDepartmentModel> departmentModels=new ArrayList<>();
         for (Department department: departments
              ) {
-            DepartmentModel departmentModel=new DepartmentModel();
+            GetAllDepartmentModel departmentModel=new GetAllDepartmentModel();
             departmentModel.setId(department.getId());
             departmentModel.setName(department.getName());
+            departmentModel.setImageURL(department.getImageURL());
+            departmentModel.setStuffMembers(department.getStuffs().size());
             departmentModels.add(departmentModel);
 
         }
@@ -40,14 +43,17 @@ public class DepartmentService {
         if(department!=null){
             departmentModel.setId(department.getId());
             departmentModel.setName(department.getName());
+            departmentModel.setImageURL(department.getImageURL());
             return  departmentModel;
         }
         return  null;
     }
 
     public  DepartmentModel createDepartment(DepartmentModel departmentModel){
+        System.out.println("Create Department");
         Department department=new Department();
         department.setName(departmentModel.getName());
+        department.setImageURL(departmentModel.getImageURL());
          department= departmentRepository.save(department);
          departmentModel.setId(department.getId());
         return  departmentModel;
@@ -57,6 +63,7 @@ public class DepartmentService {
         Department department=departmentRepository.findById(id).orElse(null);
         if(department!=null){
             department.setName(departmentDetails.getName());
+            department.setImageURL(departmentDetails.getImageURL());
             departmentRepository.save(department);
             departmentDetails.setId(id);
             return  departmentDetails;

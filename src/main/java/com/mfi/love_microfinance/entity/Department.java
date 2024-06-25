@@ -18,6 +18,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Integer id;
     private  String name;
+    private String imageURL=null;
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Stuff> stuffs;

@@ -12,5 +12,6 @@ public class LandTitleModel {
     private  Float area;
     private  String address;
     private  Integer accountId;
+    private  String accountName;
 
 }
