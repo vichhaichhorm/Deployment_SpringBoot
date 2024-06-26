@@ -25,5 +25,7 @@ public class AcountModel {
     private  String firsMemberName;
     private  Integer secondMemberId;
     private  String secondMemberName;
+    private  String address;
+    private Float os;
 
 }

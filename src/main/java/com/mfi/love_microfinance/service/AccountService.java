@@ -33,6 +33,7 @@ public class AccountService {
         List<AcountModel> acountModels = new ArrayList<>();
         for (Acount acount: accounts
         ) {
+            Float os=0.0f;
             AcountModel acountModel=new AcountModel();
             acountModel.setId(acount.getId());
             acountModel.setAmount(acount.getAmount());
@@ -51,6 +52,16 @@ public class AccountService {
             acountModel.setSecondMemberName(acount.getClient2().getName());
             acountModel.setSecondMemberId(acount.getClient2().getId());
             acountModel.setDeposit(acount.getDeposit());
+           List<Schedule> schedules= acount.getSchedule();
+
+           for(Schedule schedule:schedules){
+               if(!schedule.getIsPaid()){
+                   os=schedule.getOs()+schedule.getPrincipalDue();
+                   break;
+               }
+           }
+            acountModel.setOs(os);
+           acountModel.setAddress(acount.getClient1().getAddress());
             acountModels.add(acountModel);
         }
 
