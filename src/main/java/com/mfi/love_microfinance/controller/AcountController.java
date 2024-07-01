@@ -21,6 +21,10 @@ public class AcountController {
 
         return  accountService.createAccount(acountModel);
     }
+    @PostMapping("/runsystem")
+    public  String runSystem(){
+        return  accountService.runSystem();
+    }
     @GetMapping
     public List<AcountModel> getAllAccount(){
         return  accountService.getAllAccount();
@@ -38,10 +42,19 @@ public class AcountController {
     public SheduleResponModel getScheduleForClient(@PathVariable Integer id){
         return  accountService.getTable(id);
     }
+    @GetMapping("/history/{id}")
+    public  SheduleResponModel getTableHistory(@PathVariable Integer id){
+        return  accountService.getTableHistory(id);
+    }
     @PostMapping("/pay")
     public  String repay(@RequestBody PaymentModel paymentModel){
         System.out.println("Paymetn in account controller");
         return  accountService.repay(paymentModel);
+    }
+    @GetMapping("/pay/{id}")
+    public  List<PaymentModel> historyPayment(@PathVariable Integer id){
+        System.out.println("Paymetn in account controller");
+        return  accountService.historyPayment(id);
     }
     @GetMapping("/checkbeforepay/{id}")
     public AccountResponeForPayment checkAccountBeforePay(@PathVariable Integer id){

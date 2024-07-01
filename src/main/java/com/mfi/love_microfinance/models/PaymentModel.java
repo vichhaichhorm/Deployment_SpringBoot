@@ -11,5 +11,7 @@ import java.time.LocalDateTime;
 public class PaymentModel {
     private  Integer accountId;
     private  Float amount;
+    private LocalDateTime date;
+    private  Integer id;
 
 }

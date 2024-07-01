@@ -26,6 +26,8 @@ public class AccountService {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+    @Autowired
+    private LanTitleRepository lanTitleRepository;
 @Autowired
     PaymentRepository paymentRepository;
     public List<AcountModel> getAllAccount(){
@@ -71,6 +73,19 @@ public class AccountService {
     public AcountModel getAccountById(Integer id){
         Acount acount=acountRepository.findById(id).orElse(null);
         AcountModel acountModel=new AcountModel();
+        List<LandTitleModel> landTitleModels=new ArrayList<>();
+        for(LandTitle landTitle:acount.getLandTitles()){
+            LandTitleModel landTitleModel=new LandTitleModel();
+            landTitleModel.setId(landTitle.getId());
+            landTitleModel.setType(landTitle.getType());
+            landTitleModel.setArea(landTitle.getArea());
+            landTitleModel.setSecondOwner(landTitle.getSecondOwner());
+            landTitleModel.setFirstOwner(landTitle.getFirstOwner());
+            landTitleModel.setConfirmBy(landTitle.getConfirmBy());
+            landTitleModel.setAddress(landTitle.getAddress());
+            landTitleModels.add(landTitleModel);
+        }
+        acountModel.setLandTitles(landTitleModels);
         acountModel.setId(acount.getId());
         acountModel.setAmount(acount.getAmount());
         acountModel.setRate(acount.getRate());
@@ -87,14 +102,22 @@ public class AccountService {
         acountModel.setFirstMemberId(acount.getClient1().getId());
         acountModel.setSecondMemberName(acount.getClient2().getName());
         acountModel.setSecondMemberId(acount.getClient2().getId());
+        acountModel.setAddress(acount.getClient1().getAddress());
         acountModel.setDeposit(acount.getDeposit());
-
+        List<Schedule> schedules=acount.getSchedule();
+        for(Schedule schedule:schedules){
+            if(!schedule.getIsPaid()){
+                acountModel.setOs(schedule.getOs()+schedule.getPrincipalDue());
+                break;
+            }
+        }
 
         return  acountModel;
     }
 
     public AcountModel createAccount(AcountModel acountModel){
         Acount acount=new Acount();
+        acountModel.setDebusdate(LocalDate.now());
         acount.setAmount(acountModel.getAmount());
         acount.setRate(acountModel.getRate());
         acount.setTerm(acountModel.getTerm());
@@ -112,7 +135,7 @@ public class AccountService {
         acount.setClient1(first);
         acount.setClient2(second);
         if(co !=null && aa!=null && bm !=null && first!=null && second!=null){
-            System.out.println("HHHHHHHHH    Paasss HHHHHHHHHHHHH          ");
+
             Acount saveAcount=acountRepository.save(acount);
             acountModel.setId(saveAcount.getId());
             acountModel.setCoName(saveAcount.getCo().getName());
@@ -126,8 +149,6 @@ public class AccountService {
             scheduleService.createSchedule(acountModel);
             return  acountModel;
         }
-
-
 
 
 
@@ -173,6 +194,53 @@ public class AccountService {
         }
         sheduleResponModel.setTable(tablesModels);
         return  sheduleResponModel;
+    }    public SheduleResponModel getTableHistory(Integer id){
+        Acount acount=acountRepository.findById(id).orElse(null);
+        SheduleResponModel sheduleResponModel=new SheduleResponModel();
+        List<TableModel> tablesModels=new ArrayList<>();
+        sheduleResponModel.setId(acount.getId());
+        sheduleResponModel.setDebusdate(acount.getDebusdate());
+        sheduleResponModel.setAmount(acount.getAmount());
+        sheduleResponModel.setRate(acount.getRate());
+        sheduleResponModel.setTerm(acount.getTerm());
+        sheduleResponModel.setAaName(acount.getAa().getName());
+        sheduleResponModel.setCoName(acount.getCo().getName());
+        sheduleResponModel.setFirsMemberName(acount.getClient1().getName());
+        sheduleResponModel.setSecondMemberName(acount.getClient2().getName());
+        sheduleResponModel.setAddress(acount.getClient1().getAddress());
+
+        for (Schedule shedule:acount.getSchedule()
+             ) {
+                TableModel tableModel=new TableModel();
+                tableModel.setOs(shedule.getOs());
+                tableModel.setInterest(shedule.getInterest());
+                tableModel.setDueDate(shedule.getDueDate());
+                tableModel.setTotal(shedule.getTotal());
+                tableModel.setPrincipalDue(shedule.getPrincipalDue());
+                tableModel.setDayOverdue(shedule.getDayOverdue());
+            tablesModels.add(tableModel);
+
+        }
+        sheduleResponModel.setTable(tablesModels);
+        return  sheduleResponModel;
+    }
+
+    public String runSystem(){
+        List<Acount> acounts=acountRepository.findAll();
+        for(Acount acount:acounts){
+            for(Schedule schedule:acount.getSchedule()){
+                LocalDate now=LocalDate.now();
+                if(!schedule.getIsPaid()){
+                    if(now.isAfter(schedule.getDueDate())){
+                        int day=now.compareTo(schedule.getDueDate());
+                        schedule.setDayOverdue(String.valueOf(day));
+                    }
+                    break;
+                }
+            }
+
+        }
+        return  "finish";
     }
 
 public String repay(PaymentModel paymentModel){
@@ -214,6 +282,25 @@ public String repay(PaymentModel paymentModel){
     paymentRepository.save(payment);
         return  "Successfully";
 }
+
+public  List<PaymentModel> historyPayment(Integer id){
+        Acount acount=acountRepository.findById(id).orElse(null);
+        List<PaymentModel> payments=new ArrayList<>();
+        if(acount!=null){
+            for(Payment payment:acount.getPayments()){
+                PaymentModel paymentModel=new PaymentModel();
+                paymentModel.setAmount(payment.getAmount());
+                paymentModel.setDate(payment.getDatePay());
+                paymentModel.setId(payment.getId());
+                payments.add(paymentModel);
+            }
+
+            return  payments;
+        }
+
+        return  null;
+}
+
 
 public AccountResponeForPayment checkAccountBeforePay(Integer id){
         AccountResponeForPayment accountResponeForPayment=new AccountResponeForPayment();

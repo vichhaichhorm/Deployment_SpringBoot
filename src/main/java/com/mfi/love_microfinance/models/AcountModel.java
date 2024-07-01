@@ -1,9 +1,11 @@
 package com.mfi.love_microfinance.models;
 
+import com.mfi.love_microfinance.entity.LandTitle;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class AcountModel {
@@ -28,4 +30,5 @@ public class AcountModel {
     private  String address;
     private Float os;
 
+    private List<LandTitleModel> landTitles;
 }

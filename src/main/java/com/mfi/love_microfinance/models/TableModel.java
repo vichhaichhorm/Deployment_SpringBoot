@@ -11,5 +11,5 @@ public class TableModel {
     private Float interest;
     private Float principalDue;
     private Float total=0.0f;
-
+    private  String dayOverdue;
 }
