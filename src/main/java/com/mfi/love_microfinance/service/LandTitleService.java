@@ -83,6 +83,7 @@ public class LandTitleService {
 
         return  landTitleModels;
     }
+        public void  deleteLandTitle(Integer id){lanTitleRepository.deleteById(id);}
 
     public  LandTitleModel getLandTitleById(Integer id){
         LandTitleModel landTitleModel=new LandTitleModel();

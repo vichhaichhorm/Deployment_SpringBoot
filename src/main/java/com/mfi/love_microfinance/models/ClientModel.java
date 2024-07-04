@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ClientModel {
@@ -19,5 +20,6 @@ public class ClientModel {
     private  String education;
     private  Boolean status;
     private  String phone;
+    private  Boolean haveAccount;
 
 }

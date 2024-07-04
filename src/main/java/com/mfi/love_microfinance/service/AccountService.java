@@ -7,10 +7,14 @@ import jakarta.persistence.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AccountService {
@@ -117,7 +121,10 @@ public class AccountService {
 
     public AcountModel createAccount(AcountModel acountModel){
         Acount acount=new Acount();
-        acountModel.setDebusdate(LocalDate.now());
+        if(acountModel.getDebusdate()==null){
+            acountModel.setDebusdate(LocalDate.now());
+        }
+
         acount.setAmount(acountModel.getAmount());
         acount.setRate(acountModel.getRate());
         acount.setTerm(acountModel.getTerm());
@@ -181,6 +188,18 @@ public class AccountService {
         sheduleResponModel.setSecondMemberName(acount.getClient2().getName());
         sheduleResponModel.setAddress(acount.getClient1().getAddress());
 
+        for(int i=0;i<acount.getSchedule().size()-1;i++) {
+
+            for (int j = 0; j < acount.getSchedule().size() - i - 1; j++) {
+                if (acount.getSchedule().get(j).getDueDate().isAfter(acount.getSchedule().get(j + 1).getDueDate())) {
+
+                    Schedule schedule = acount.getSchedule().get(j);
+                    acount.getSchedule().set(j, acount.getSchedule().get(j + 1));
+                    acount.getSchedule().set(j + 1, schedule);
+                }
+            }
+        }
+
         for (Schedule shedule:acount.getSchedule()
              ) {
                 TableModel tableModel=new TableModel();
@@ -209,6 +228,22 @@ public class AccountService {
         sheduleResponModel.setSecondMemberName(acount.getClient2().getName());
         sheduleResponModel.setAddress(acount.getClient1().getAddress());
 
+        //sort
+
+        for(int i=0;i<acount.getSchedule().size()-1;i++){
+
+            for(int j=0;j<acount.getSchedule().size()-i-1;j++){
+                if(acount.getSchedule().get(j).getDueDate().isAfter(acount.getSchedule().get(j+1).getDueDate())){
+
+                    Schedule   schedule=acount.getSchedule().get(j);
+                    acount.getSchedule().set(j,acount.getSchedule().get(j+1));
+                    acount.getSchedule().set(j+1,schedule);
+                }
+            }
+
+
+        }
+
         for (Schedule shedule:acount.getSchedule()
              ) {
                 TableModel tableModel=new TableModel();
@@ -228,14 +263,51 @@ public class AccountService {
     public String runSystem(){
         List<Acount> acounts=acountRepository.findAll();
         for(Acount acount:acounts){
+                //sort
+            for(int i=0;i<acount.getSchedule().size()-1;i++){
+
+                for(int j=0;j<acount.getSchedule().size()-i-1;j++){
+                    if(acount.getSchedule().get(j).getDueDate().isAfter(acount.getSchedule().get(j+1).getDueDate())){
+
+                        Schedule   schedule=acount.getSchedule().get(j);
+                        acount.getSchedule().set(j,acount.getSchedule().get(j+1));
+                        acount.getSchedule().set(j+1,schedule);
+                    }
+                }
+
+
+            }
             for(Schedule schedule:acount.getSchedule()){
                 LocalDate now=LocalDate.now();
+
+
+
                 if(!schedule.getIsPaid()){
+
                     if(now.isAfter(schedule.getDueDate())){
-                        int day=now.compareTo(schedule.getDueDate());
-                        schedule.setDayOverdue(String.valueOf(day));
+                        float money=acount.getDeposit()-schedule.getTotal();
+                        if(money<0){
+                            acount.setDeposit(0.0f);
+                            schedule.setLackOfPayment(Math.abs(money));
+                            schedule.setIsPaid(false);
+                            long day= ChronoUnit.DAYS.between(schedule.getDueDate(), now);
+                            schedule.setDayOverdue(String.valueOf(day));
+                            System.out.println("Day : "+String.valueOf(day));
+                            scheduleRepository.save(schedule);
+
+                        }
+                        else{
+                            acount.setDeposit(money);
+                            schedule.setLackOfPayment(0.0f);
+                            schedule.setIsPaid(true);
+
+                            scheduleRepository.save(schedule);
+
+                        }
+
                     }
-                    break;
+
+                    break  ;
                 }
             }
 
@@ -313,4 +385,105 @@ public AccountResponeForPayment checkAccountBeforePay(Integer id){
         return  null;
 }
 
+public  LoanOverDueModel getAllLoanOverDues(){
+        LoanOverDueModel loanOverDueModel=new LoanOverDueModel();
+        List<Acount> acounts=acountRepository.findAll();
+        List<Long> years=new ArrayList<>();
+        List<Long> loanDisburses=new ArrayList<>();
+        List<ScheduleOverDue> scheduleOverDues=new ArrayList<>();
+        for(int i=0;i<4;i++){
+            years.add(Long.valueOf(LocalDate.now().getYear()-i));
+
+
+            int finalI = i;
+            long count = acounts.stream()
+                    .filter(event -> event.getDebusdate().getYear() == years.get(finalI))
+                    .count();
+            loanDisburses.add(count);
+
+        }
+
+        loanOverDueModel.setLoanDisburses(loanDisburses);
+        loanOverDueModel.setYears(years);
+        loanOverDueModel.setLoans(acounts.size());
+        System.out.println("Test Schedule overdue");
+        Float os=0.f;
+        int par=0;
+        int par30=0;
+        int npl=0;
+        int writeOff=0;
+
+        for(Acount acount:acounts){
+            //sort
+            for(int i=0;i<acount.getSchedule().size()-1;i++){
+
+                for(int j=0;j<acount.getSchedule().size()-i-1;j++){
+                    if(acount.getSchedule().get(j).getDueDate().isBefore(acount.getSchedule().get(j+1).getDueDate())){
+
+                        Schedule   schedule=acount.getSchedule().get(j);
+                        acount.getSchedule().set(j,acount.getSchedule().get(j+1));
+                        acount.getSchedule().set(j+1,schedule);
+                    }
+                }
+
+            }
+//filter schedule
+            for(Schedule schedule:acount.getSchedule()){
+
+                if(schedule.getIsPaid()){
+                    os+=schedule.getOs()+schedule.getPrincipalDue();
+                    break;
+                }
+                if(!Objects.equals(schedule.getDayOverdue(), "") && schedule.getDayOverdue() != null && !schedule.getDayOverdue().equals(" ")){
+                    ScheduleOverDue scheduleOverDue=new ScheduleOverDue();
+                    scheduleOverDue.setAccountId(acount.getId());
+                    scheduleOverDue.setAccountName(acount.getClient1().getName());
+                    scheduleOverDue.setCoName(String.valueOf(acount.getCo().getId())+": "+acount.getCo().getName());
+                    scheduleOverDue.setDisburseDate(acount.getDebusdate());
+                    scheduleOverDue.setDisburseAmount(acount.getAmount());
+                    scheduleOverDue.setPrincipalDue(schedule.getPrincipalDue());
+                    scheduleOverDue.setInterestDue(schedule.getInterest());
+                    scheduleOverDue.setTotalDue(schedule.getTotal());
+                    scheduleOverDue.setDateDue(schedule.getDueDate());
+                    int day=Integer.valueOf(schedule.getDayOverdue());
+                    scheduleOverDue.setDayOverDue(day);
+                    scheduleOverDue.setPhone(acount.getClient1().getPhone());
+                    scheduleOverDue.setAddress(acount.getClient1().getAddress());
+                    scheduleOverDue.setOs(schedule.getOs()+schedule.getPrincipalDue());
+
+                    os+=schedule.getOs()+schedule.getPrincipalDue();
+                    if(day>360){
+                        writeOff++;
+                    }
+                    else if(day >89){
+                        npl++;
+                    }else if(day >30){
+                        par30++;
+                    }
+                    else{
+                        par++;
+                    }
+                    scheduleOverDues.add(scheduleOverDue);
+                }
+            }
+
+        }
+loanOverDueModel.setScheduleOverDues(scheduleOverDues);
+        List<Integer> qlyLoans=new ArrayList<>();
+        int normal=loanOverDueModel.getLoans()-par-par30-npl-writeOff;
+        qlyLoans.add(normal);
+        qlyLoans.add(par);
+        qlyLoans.add(par30);
+        qlyLoans.add(npl);
+        qlyLoans.add(writeOff);
+        loanOverDueModel.setQlyLoans(qlyLoans);
+        loanOverDueModel.setOs(Double.valueOf(os));
+        loanOverDueModel.setNormal(normal);
+        return loanOverDueModel;
 }
+
+
+}
+
+
+

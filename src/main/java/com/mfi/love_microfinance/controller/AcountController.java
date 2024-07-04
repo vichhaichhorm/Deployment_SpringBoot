@@ -1,9 +1,6 @@
 package com.mfi.love_microfinance.controller;
 
-import com.mfi.love_microfinance.models.AccountResponeForPayment;
-import com.mfi.love_microfinance.models.AcountModel;
-import com.mfi.love_microfinance.models.PaymentModel;
-import com.mfi.love_microfinance.models.SheduleResponModel;
+import com.mfi.love_microfinance.models.*;
 import com.mfi.love_microfinance.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -60,4 +57,10 @@ public class AcountController {
     public AccountResponeForPayment checkAccountBeforePay(@PathVariable Integer id){
         return  accountService.checkAccountBeforePay(id);
     }
+    @GetMapping("/overdue")
+    public LoanOverDueModel getAllLoanOverDue(){
+
+        return accountService.getAllLoanOverDues();
+    }
+
 }

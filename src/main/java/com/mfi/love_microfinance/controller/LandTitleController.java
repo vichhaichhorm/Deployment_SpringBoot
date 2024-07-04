@@ -33,4 +33,9 @@ public class LandTitleController {
        }
         return  landTitleService.updateLandTitle(id,landTitleModel);
     }
+    @DeleteMapping("/{id}")
+    public  void deleteLandTitle(@PathVariable Integer id){
+        landTitleService.deleteLandTitle(id);
+    }
+
 }

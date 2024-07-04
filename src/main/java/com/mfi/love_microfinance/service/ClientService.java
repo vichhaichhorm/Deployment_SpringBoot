@@ -33,6 +33,8 @@ public class ClientService {
             clientModel.setEducation(client.getEducation());
             clientModel.setJob(client.getJob());
             clientModel.setPhone(client.getPhone());
+
+            clientModel.setHaveAccount(!client.getAcount1().isEmpty() || !client.getAcount2().isEmpty());
             clientModels.add(clientModel);
         }
         return  clientModels;
@@ -51,7 +53,8 @@ public class ClientService {
         clientModel.setStatus(client.getStatus());
         clientModel.setEducation(client.getEducation());
         clientModel.setJob(client.getJob());
-        client.setPhone(client.getPhone());
+        clientModel.setPhone(client.getPhone());
+        clientModel.setHaveAccount(!client.getAcount1().isEmpty() || !client.getAcount2().isEmpty());
         return  clientModel;
     }
 
