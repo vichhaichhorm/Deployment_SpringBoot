@@ -9,10 +9,8 @@ import java.time.LocalDate;
 public class LoveMicrofinanceApplication {
 
 	public static void main(String[] args) {
-
-
-
 		SpringApplication.run(LoveMicrofinanceApplication.class, args);
 	}
 
 }
+

@@ -124,7 +124,7 @@ public class AccountService {
         if(acountModel.getDebusdate()==null){
             acountModel.setDebusdate(LocalDate.now());
         }
-
+        System.out.println("Hello test one");
         acount.setAmount(acountModel.getAmount());
         acount.setRate(acountModel.getRate());
         acount.setTerm(acountModel.getTerm());
@@ -142,7 +142,7 @@ public class AccountService {
         acount.setClient1(first);
         acount.setClient2(second);
         if(co !=null && aa!=null && bm !=null && first!=null && second!=null){
-
+            System.out.println("Hello test two");
             Acount saveAcount=acountRepository.save(acount);
             acountModel.setId(saveAcount.getId());
             acountModel.setCoName(saveAcount.getCo().getName());
@@ -156,8 +156,6 @@ public class AccountService {
             scheduleService.createSchedule(acountModel);
             return  acountModel;
         }
-
-
 
         return  null;
     }
